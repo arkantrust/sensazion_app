@@ -8,7 +8,10 @@ plugins {
 android {
     namespace = "app.ddulce.sensazion_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Install the latest ndk version through android studio.
+    // Many dependencies like path_provider_android need atleast ndk version 27.0.12077973to work.
+    // Different versions of ndk are usually placed at ~/Android/Sdk/ndk
+    ndkVersion = "29.0.13113456"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
