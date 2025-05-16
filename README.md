@@ -4,10 +4,10 @@ Una app que busca mejorar la seguridad personal mediante reportes colaborativos 
 
 ## 🔖 Tech Stack
 
-- **Frontend:** Android (Kotlin, Jetpack Compose, Google Maps)
-- **Backend:** Spring Boot + Spring Authorization Server
+- **Frontend:** Flutter
+- **Backend:** Supabase
 - **Comunicación:** REST API & WebSockets
-- **Base de Datos:** PostgreSQL + PostGIS
+- **Base de Datos:** Supabase PostgreSQL + PostGIS
 
 ## 🌐 Funcionalidades
 
@@ -21,7 +21,7 @@ Una app que busca mejorar la seguridad personal mediante reportes colaborativos 
 
 - PostGIS para consultas geoespaciales eficientes (puntos y polígonos).
 - WebSockets para reportes en tiempo real.
-- Spring Authorization Server para una autenticación robusta.
+- Supabase para una autenticación robusta.
 
 ## 🏆 MVP
 ### 🗺️ Mapa interactivo
