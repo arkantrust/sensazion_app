@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -158,6 +159,7 @@ class _SignUpButton extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyMedium,
         children: [
           TextSpan(
+            recognizer: TapGestureRecognizer()..onTap = () => context.push(SignUpPage.route().path),
             text: 'Sign Up',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
           ),

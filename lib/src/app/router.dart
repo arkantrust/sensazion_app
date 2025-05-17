@@ -35,12 +35,15 @@ class AppRouter {
       refreshListenable: AuthenticationRefreshStream(auth.stream),
       redirect: (context, state) {
         final authState = auth.state;
-        final goingToSignIn = state.matchedLocation.contains(SignInPage.route().path);
+
+        // The route is /auth/* (e.g., /auth/sign-in, /auth/sign-up, etc.)
+        final goingToAuth = state.matchedLocation.contains('/auth/');
+
         final isAuthenticated = authState.status == AuthenticationStatus.authenticated;
 
-        if (!isAuthenticated && !goingToSignIn) return SignInPage.route().path;
+        if (!isAuthenticated && !goingToAuth) return SignInPage.route().path;
 
-        if (isAuthenticated && goingToSignIn) return ProfilePage.route().path;
+        if (isAuthenticated && goingToAuth) return ProfilePage.route().path;
 
         // Unreacheable
         return null;
@@ -48,6 +51,7 @@ class AppRouter {
       routes: [
         HomePage.route(), // rpute: /
         SignInPage.route(), // route: /auth/sign-in
+        SignUpPage.route(), // route: /auth/sign-up
         GoRoute(
           path: '/auth',
           builder: (context, state) {
