@@ -24,7 +24,23 @@ final class SupabaseAuthenticationRepository extends AuthenticationRepository {
     required String email,
     required String password,
   }) async {
-    throw UnimplementedError();
+    try {
+      await _supabase.auth.signUp(
+        email: email,
+        password: password,
+        data: {
+          'first_name': firstName,
+          'last_name': lastName,
+        }
+      );
+      _controller.add(AuthenticationStatus.authenticated);
+      return const Success.empty();
+    } on AuthApiException catch (e) {
+      return Failure(Exception(e.code ?? 'Unknown error'));
+    } catch (e) {
+      log('Error signing in: $e', level: 2000);
+      return Failure(Exception(e.toString()));
+    }
   }
 
   @override
