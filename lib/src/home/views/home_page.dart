@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sensazion_app/src/home/home.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  static GoRoute route() {
+    return GoRoute(path: '/', builder: (context, state) => const HomePage());
+  }
 
   @override
   Widget build(BuildContext context) {

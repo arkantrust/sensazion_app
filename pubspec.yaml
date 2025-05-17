@@ -27,6 +27,7 @@ dependencies:
     path: packages/authentication_repository
   core:
     path: packages/core
+  go_router: ^15.1.2
 
 dev_dependencies:
   flutter_test:
