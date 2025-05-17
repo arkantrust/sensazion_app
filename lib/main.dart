@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:sensazion_app/src/config/config.dart';
-import 'package:sensazion_app/src/home/home.dart';
+import 'package:sensazion_app/src/app/app.dart';
 
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
@@ -13,7 +13,6 @@ class AppBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {
     super.onChange(bloc, change);
-    log('onChange(${bloc.runtimeType}, $change)');
   }
 
   @override
@@ -36,22 +35,4 @@ Future<void> main() async {
   await initSupabase();
 
   runApp(const App());
-}
-
-var palette = ColorScheme.fromSeed(seedColor: Colors.blue);
-
-class App extends StatelessWidget {
-  const App({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SensazionApp',
-      theme: ThemeData(
-        colorScheme: palette,
-        appBarTheme: AppBarTheme(backgroundColor: palette.inversePrimary),
-      ),
-      home: HomePage(),
-    );
-  }
 }

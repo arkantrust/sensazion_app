@@ -1,0 +1,17 @@
+name: user_repository
+description: Dart package to manage the user domain.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  core:
+    path: ../core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
