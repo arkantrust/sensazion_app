@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:sensazion_app/src/home/home.dart';
 import 'package:sensazion_app/src/authentication/authentication.dart';
+import 'package:sensazion_app/src/profile/profile.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 
 class AuthenticationRefreshStream extends ChangeNotifier {
@@ -39,7 +40,7 @@ class AppRouter {
 
         if (!isAuthenticated && !goingToSignIn) return SignInPage.route().path;
 
-        if (isAuthenticated && goingToSignIn) return HomePage.route().path;
+        if (isAuthenticated && goingToSignIn) return ProfilePage.route().path;
 
         // Unreacheable
         return null;
@@ -60,6 +61,7 @@ class AppRouter {
             return const HomePage();
           },
         ),
+        ProfilePage.route(), // route: /profile
       ],
       errorBuilder:
           (context, state) =>
