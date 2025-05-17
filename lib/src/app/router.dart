@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:sensazion_app/src/home/home.dart';
+import 'package:sensazion_app/src/authentication/authentication.dart';
 
 GoRouter router = GoRouter(
-  initialLocation:
-      '/', // This can be changed arbitrarily to test different routes but for production, it should be the home route.
+  initialLocation: '/auth/sign-in',
   debugLogDiagnostics: true,
   errorBuilder: (context, state) => Scaffold(
     body: Center(
@@ -13,6 +13,7 @@ GoRouter router = GoRouter(
     )
   ),
   routes: [
-    HomePage.route(),
+    HomePage.route(), // route: /
+    SignInPage.route(), // route: /auth/sign-in
   ],
 );

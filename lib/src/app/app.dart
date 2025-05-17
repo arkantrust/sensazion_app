@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sensazion_app/src/authentication/authentication.dart';
+import 'package:user_repository/user_repository.dart';
+import 'package:authentication_repository/authentication_repository.dart';
+
 import 'package:sensazion_app/src/app/theme.dart';
 import 'package:sensazion_app/src/app/router.dart';
 
@@ -7,10 +12,34 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'SensazionApp',
-      theme: lightTheme,
-      routerConfig: router,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AuthenticationRepository>(
+          create: (_) => FakeAuthenticationRepository(),
+          dispose: (repo) => repo.dispose(),
+        ),
+        RepositoryProvider<UserRepository>(
+          create: (_) => FakeUserRepository(),
+          dispose: (repo) => repo.dispose(),
+        ),
+      ],
+      child: BlocProvider(
+        create:
+            (context) => AuthenticationBloc(
+              authenticationRepository: context.read<AuthenticationRepository>(),
+              userRepository: context.read<UserRepository>(),
+            )..add(AuthenticationSubscriptionRequested()),
+        child: Builder(
+          builder: (context) {
+            return MaterialApp.router(
+              title: 'SensazionApp',
+              debugShowCheckedModeBanner: false,
+              theme: lightTheme,
+              routerConfig: router,
+            );
+          },
+        ),
+      ),
     );
   }
 }
