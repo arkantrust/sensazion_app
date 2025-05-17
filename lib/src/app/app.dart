@@ -35,7 +35,7 @@ class App extends StatelessWidget {
               title: 'SensazionApp',
               debugShowCheckedModeBanner: false,
               theme: lightTheme,
-              routerConfig: router,
+              routerConfig: AppRouter(context.read<AuthenticationBloc>()).router,
             );
           },
         ),
