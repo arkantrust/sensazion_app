@@ -42,6 +42,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 
   void _onSignOutPressed(AuthenticationSignOutPressed event, Emitter<AuthenticationState> emit) {
     _authenticationRepository.signOut();
+    _userRepository.dispose(); // Remove user from cache
   }
 
   Future<void> _emitUserIfExists(Emitter<AuthenticationState> emit) async {
