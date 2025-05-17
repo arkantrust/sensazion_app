@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sensazion_app/src/authentication/authentication.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 
+import 'package:sensazion_app/src/authentication/authentication.dart';
+import 'package:sensazion_app/src/config/config.dart';
 import 'package:sensazion_app/src/app/theme.dart';
 import 'package:sensazion_app/src/app/router.dart';
 
@@ -15,11 +16,11 @@ class App extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthenticationRepository>(
-          create: (_) => FakeAuthenticationRepository(),
+          create: (_) => SupabaseAuthenticationRepository(supabase: supabase),
           dispose: (repo) => repo.dispose(),
         ),
         RepositoryProvider<UserRepository>(
-          create: (_) => FakeUserRepository(),
+          create: (_) => SupabaseUserRepository(supabase: supabase),
           dispose: (repo) => repo.dispose(),
         ),
       ],
