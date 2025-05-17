@@ -1,9 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:sensazion_app/src/app/snack_bar.dart';
 import 'package:sensazion_app/src/config/service_locator.dart';
 import 'package:sensazion_app/src/authentication/authentication.dart';
 
@@ -31,9 +33,8 @@ class SignInPage extends StatelessWidget {
                       previous.status != current.status && current.status.isFailure,
               listener: (context, state) {
                 if (state.status.isFailure) {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(const SnackBar(content: Text('Invalid credentials')));
+                  HapticFeedback.mediumImpact();
+                  context.showSnackBar(state.error);
                 }
               },
               child: Align(

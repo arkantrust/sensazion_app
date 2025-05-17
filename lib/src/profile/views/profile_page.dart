@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sensazion_app/src/authentication/authentication.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:sensazion_app/src/app/snack_bar.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -74,7 +75,11 @@ class ProfilePage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton.small(
           heroTag: 'signout',
-          onPressed: () => context.read<AuthenticationBloc>().add(AuthenticationSignOutPressed()),
+          onPressed: () {
+            HapticFeedback.mediumImpact();
+            context.read<AuthenticationBloc>().add(AuthenticationSignOutPressed());
+          },
+          tooltip: 'Cerrar sesión',
           child: const Icon(Icons.logout),
         ),
       ),
@@ -113,10 +118,9 @@ class _ProfileField extends StatelessWidget {
         ),
         onTap: () async {
           await Clipboard.setData(ClipboardData(text: value));
+          HapticFeedback.mediumImpact();
           if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('Copied to clipboard!')));
+            context.showSnackBar('Copiado!');
           }
         },
       ),
