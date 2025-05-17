@@ -15,7 +15,6 @@ final class FakeUserRepository extends UserRepository {
         firstName: 'David',
         lastName: 'Dulce',
         email: 'david_dulce@ieee.org',
-        avatarUrl: 'https://avatars.githubusercontent.com/u/114516037?v=4',
       );
       _user = u;
       return const Success(u);

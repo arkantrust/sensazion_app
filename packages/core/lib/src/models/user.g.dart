@@ -11,7 +11,7 @@ _User _$UserFromJson(Map<String, dynamic> json) => _User(
   firstName: json['first_name'] as String,
   lastName: json['last_name'] as String,
   email: json['email'] as String,
-  avatarUrl: json['avatar_url'] as String,
+  avatarUrl: json['avatar_url'] as String? ?? User.defaultAvatarUrl,
 );
 
 Map<String, dynamic> _$UserToJson(_User instance) => <String, dynamic>{

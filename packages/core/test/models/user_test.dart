@@ -2,13 +2,13 @@ import 'package:core/src/models/user.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('User serialization', () {
-    final userId = 'cd152bc7-d1eb-4c48-bea5-91f3642cc511';
-    final userFirstName = 'David';
-    final userLastName = 'Dulce';
-    final userEmail = 'david_dulce@ieee.org';
-    final userAvatarUrl = 'https://avatars.githubusercontent.com/u/114516037?v=4';
+  final userId = 'cd152bc7-d1eb-4c48-bea5-91f3642cc511';
+  final userFirstName = 'David';
+  final userLastName = 'Dulce';
+  final userEmail = 'david_dulce@ieee.org';
+  final userAvatarUrl = User.defaultAvatarUrl;
 
+  group('User serialization', () {
     test('User to json has correct field names', () {
       final u = User(
         id: userId,
@@ -41,6 +41,29 @@ void main() {
       expect(user.lastName, json['last_name']);
       expect(user.email, json['email']);
       expect(user.avatarUrl, json['avatar_url']);
+    });
+  });
+
+  group('User default avatar URL', () {
+    test('defaultAvatarUrl is unknown.avif', () {
+      expect(User.defaultAvatarUrl, 'https://avatars.sensazionapp.ddulce.app/unknown.avif');
+    });
+
+    test('Creating a User without avatarUrl has defaultAvatarUrl as avatarUrl', () {
+      final user = User(
+        id: userId,
+        firstName: userFirstName,
+        lastName: userLastName,
+        email: userEmail,
+      );
+
+      expect(user.avatarUrl, User.defaultAvatarUrl);
+    });
+
+    test('User.empty has defaultAvatarUrl as avatarUrl', () {
+      final user = User.empty;
+
+      expect(user.avatarUrl, User.defaultAvatarUrl);
     });
   });
 }

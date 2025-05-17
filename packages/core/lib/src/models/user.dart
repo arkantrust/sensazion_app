@@ -18,11 +18,13 @@ abstract class User with _$User {
     required String firstName,
     required String lastName,
     required String email,
-    required String avatarUrl,
+    @Default(User.defaultAvatarUrl) String avatarUrl,
   }) = _User;
 
+  static const String defaultAvatarUrl = 'https://avatars.sensazionapp.ddulce.app/unknown.avif';
+
   /// Empty user represents an unauthenticated user.
-  static const empty = User(id: '', firstName: '', lastName: '', email: '', avatarUrl: '');
+  static const empty = User(id: '', firstName: '', lastName: '', email: '');
 
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
 }

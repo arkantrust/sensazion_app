@@ -90,14 +90,14 @@ as String,
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class _User with DiagnosticableTreeMixin implements User {
-  const _User({required this.id, required this.firstName, required this.lastName, required this.email, required this.avatarUrl});
+  const _User({required this.id, required this.firstName, required this.lastName, required this.email, this.avatarUrl = User.defaultAvatarUrl});
   factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
 @override final  String id;
 @override final  String firstName;
 @override final  String lastName;
 @override final  String email;
-@override final  String avatarUrl;
+@override@JsonKey() final  String avatarUrl;
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
