@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
-import 'package:authentication_repository/authentication_repository.dart';
+import 'package:sensazion_app/src/config/service_locator.dart';
 import 'package:sensazion_app/src/authentication/authentication.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -23,7 +23,7 @@ class SignUpPage extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: BlocProvider(
             create: (context) {
-              return SignUpBloc(authenticationRepository: context.read<AuthenticationRepository>());
+              return sl<SignUpBloc>();
             },
             child: BlocListener<SignUpBloc, SignUpState>(
               listenWhen: (previous, current) => previous.error != current.error,

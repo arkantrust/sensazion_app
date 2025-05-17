@@ -34,5 +34,7 @@ Future<void> main() async {
 
   await initSupabase();
 
+  initServiceLocator();
+
   runApp(const App());
 }

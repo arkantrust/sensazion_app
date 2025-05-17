@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sensazion_app/src/home/home.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sensazion_app/src/config/service_locator.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -12,7 +13,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => CounterCubit(), child: const CounterView());
+    return BlocProvider(create: (_) => sl<CounterCubit>(), child: const CounterView());
   }
 }
 

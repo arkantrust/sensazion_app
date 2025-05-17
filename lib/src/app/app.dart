@@ -16,20 +16,16 @@ class App extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthenticationRepository>(
-          create: (_) => SupabaseAuthenticationRepository(supabase: supabase),
+          create: (_) => sl<AuthenticationRepository>(),
           dispose: (repo) => repo.dispose(),
         ),
         RepositoryProvider<UserRepository>(
-          create: (_) => SupabaseUserRepository(supabase: supabase),
+          create: (_) => sl<UserRepository>(),
           dispose: (repo) => repo.dispose(),
         ),
       ],
       child: BlocProvider(
-        create:
-            (context) => AuthenticationBloc(
-              authenticationRepository: context.read<AuthenticationRepository>(),
-              userRepository: context.read<UserRepository>(),
-            )..add(AuthenticationSubscriptionRequested()),
+        create: (context) => sl<AuthenticationBloc>()..add(AuthenticationSubscriptionRequested()),
         child: Builder(
           builder: (context) {
             return MaterialApp.router(
