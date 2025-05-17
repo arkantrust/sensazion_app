@@ -25,6 +25,9 @@ class SignInPage extends StatelessWidget {
               return SignInBloc(authenticationRepository: context.read<AuthenticationRepository>());
             },
             child: BlocListener<SignInBloc, SignInState>(
+              listenWhen:
+                  (previous, current) =>
+                      previous.status != current.status && current.status.isFailure,
               listener: (context, state) {
                 if (state.status.isFailure) {
                   ScaffoldMessenger.of(context)
