@@ -8,6 +8,7 @@ import 'package:formz/formz.dart';
 import 'package:sensazion_app/src/app/snack_bar.dart';
 import 'package:sensazion_app/src/config/service_locator.dart';
 import 'package:sensazion_app/src/authentication/authentication.dart';
+import 'package:sensazion_app/src/components/components.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -20,7 +21,7 @@ class SignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Padding(
           padding: const EdgeInsets.all(12),
           child: BlocProvider(
@@ -37,223 +38,148 @@ class SignUpPage extends StatelessWidget {
               },
               child: Align(
                 alignment: const Alignment(0, -1 / 3),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // TODO: Welcome
-                      const _WelcomeText(),
-                      const SizedBox(height: 50),
+                child: BlocBuilder<SignUpBloc, SignUpState>(
+                  builder: (context, state) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Bienvenido a SensazionApp',
+                              textScaler: MediaQuery.textScalerOf(context),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(height: 50),
 
-                      // Full Name
-                      const _FullNameInput(),
-                      const SizedBox(height: 16),
+                          // Full Name
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: Row(
+                              spacing: 8,
+                              children: [
+                                Expanded(
+                                  child: NameField(
+                                    onChanged: (first) {
+                                      context.read<SignUpBloc>().add(SignUpFirstChanged(first));
+                                    },
+                                    isEmpty: state.first.isEmpty, // TODO: Add validation
+                                    textInputAction: TextInputAction.next,
+                                    label: 'Nombre',
+                                  ),
+                                ),
+                                Expanded(
+                                  child: NameField(
+                                    onChanged: (last) {
+                                      context.read<SignUpBloc>().add(SignUpLastChanged(last));
+                                    },
+                                    isEmpty: state.last.isEmpty, // TODO: Add validation
+                                    textInputAction: TextInputAction.next,
+                                    label: 'Apellido',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
 
-                      // Email
-                      const _EmailInput(),
-                      const SizedBox(height: 16),
+                          // Email
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: EmailField(
+                              onChanged: (email) {
+                                context.read<SignUpBloc>().add(SignUpEmailChanged(email));
+                              },
+                              validationError: context.select(
+                                (SignUpBloc bloc) => bloc.state.email.displayError,
+                              ),
+                              textInputAction: TextInputAction.next,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
 
-                      // Password
-                      BlocBuilder<SignUpBloc, SignUpState>(
-                        buildWhen: (previous, current) => previous.password != current.password,
-                        builder: (context, state) {
-                          return _PasswordInput(
-                            onChanged: (password) {
-                              context.read<SignUpBloc>().add(SignUpPasswordChanged(password));
-                            },
-                          );
-                        },
+                          // Password
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: PasswordField(
+                              onChanged: (password) {
+                                context.read<SignUpBloc>().add(SignUpPasswordChanged(password));
+                              },
+                              onSubmitted: (_) {
+                                context.read<SignUpBloc>().add(const SignUpSubmitted());
+                              },
+                              validationError: context.select(
+                                (SignUpBloc bloc) => bloc.state.password.displayError,
+                              ),
+                              textInputAction: TextInputAction.send,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Confirm Password
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: PasswordField(
+                              onChanged: (confirm) {
+                                context.read<SignUpBloc>().add(SignUpConfirmChanged(confirm));
+                              },
+                              onSubmitted: (_) {
+                                context.read<SignUpBloc>().add(const SignUpSubmitted());
+                              },
+                              validationError: context.select(
+                                (SignUpBloc bloc) => bloc.state.confirm.displayError,
+                              ),
+                              textInputAction: TextInputAction.send,
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+
+                          // Sign Up
+                          ThemedTextButton(
+                            isInProgressOrSuccess: context.select(
+                              (SignUpBloc bloc) => bloc.state.status.isInProgressOrSuccess,
+                            ),
+                            onPressed:
+                                context.select((SignUpBloc bloc) => bloc.state.isValid)
+                                    ? () => context.read<SignUpBloc>().add(const SignUpSubmitted())
+                                    : null,
+                            text: 'Registrarme',
+                          ),
+                          const SizedBox(height: 120),
+
+                          // Already have an account? Sign In
+                          RichText(
+                            textScaler: MediaQuery.textScalerOf(context),
+                            text: TextSpan(
+                              text: 'Ya tienes una cuenta? ',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              children: [
+                                TextSpan(
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap = () => context.go(SignInPage.route().path),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(color: Colors.blue),
+                                  text: 'Inicia sesión',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-
-                      const SizedBox(height: 16),
-
-                      // Confirm Password
-                      BlocBuilder<SignUpBloc, SignUpState>(
-                        buildWhen: (previous, current) => previous.confirm != previous.confirm,
-                        builder: (context, state) {
-                          return _PasswordInput(
-                            label: 'Confirmar contraseña',
-                            onChanged: (confirm) {
-                              context.read<SignUpBloc>().add(SignUpConfirmChanged(confirm));
-                            },
-                            textInputAction: TextInputAction.done,
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 40),
-
-                      // Sign Up
-                      _SignUpButton(),
-
-                      const SizedBox(height: 120),
-
-                      // TODO: Already have an account? Sign In
-                      const _SignInButton(),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _WelcomeText extends StatelessWidget {
-  const _WelcomeText();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        'Bienvenido a SensazionApp',
-        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class _NameInput extends StatelessWidget {
-  const _NameInput({required this.onChanged, required this.label});
-
-  final String label;
-  final void Function(String) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: TextField(
-        onChanged: onChanged,
-        enableSuggestions: true,
-        textCapitalization: TextCapitalization.words,
-        textInputAction: TextInputAction.done,
-        decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
-      ),
-    );
-  }
-}
-
-class _FullNameInput extends StatelessWidget {
-  const _FullNameInput();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        spacing: 8,
-        children: [
-          _NameInput(
-            onChanged: (first) {
-              context.read<SignUpBloc>().add(SignUpFirstChanged(first));
-            },
-            label: 'Nombre',
-          ),
-          _NameInput(
-            onChanged: (last) {
-              context.read<SignUpBloc>().add(SignUpLastChanged(last));
-            },
-            label: 'Apellido',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmailInput extends StatelessWidget {
-  const _EmailInput();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SignUpBloc, SignUpState>(
-      buildWhen: (previous, current) => previous.email != current.email,
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: TextField(
-            onChanged: (email) {
-              context.read<SignUpBloc>().add(SignUpEmailChanged(email));
-            },
-            keyboardType: TextInputType.emailAddress,
-            enableSuggestions: true,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(labelText: 'Email', border: const OutlineInputBorder()),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _PasswordInput extends StatelessWidget {
-  const _PasswordInput({required this.onChanged, String? label, TextInputAction? textInputAction})
-    : _label = label ?? 'Contraseña',
-      _textInputAction = textInputAction ?? TextInputAction.next;
-
-  final void Function(String) onChanged;
-  final String _label;
-  final TextInputAction _textInputAction;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextField(
-        onChanged: onChanged,
-        textInputAction: _textInputAction,
-        decoration: InputDecoration(labelText: _label, border: const OutlineInputBorder()),
-      ),
-    );
-  }
-}
-
-class _SignInButton extends StatelessWidget {
-  const _SignInButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      textScaler: MediaQuery.textScalerOf(context),
-      text: TextSpan(
-        text: 'Ya tienes una cuenta? ',
-        style: Theme.of(context).textTheme.bodyMedium,
-        children: [
-          TextSpan(
-            text: 'Inicia sesión',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
-            recognizer: TapGestureRecognizer()..onTap = () => context.push(SignInPage.route().path),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SignUpButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final isInProgressOrSuccess = context.select(
-      (SignUpBloc bloc) => bloc.state.status.isInProgressOrSuccess,
-    );
-
-    if (isInProgressOrSuccess) return const CircularProgressIndicator();
-
-    final isValid = context.select((SignUpBloc bloc) => bloc.state.isValid);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          key: const Key('signUpButton'),
-          onPressed: isValid ? () => context.read<SignUpBloc>().add(const SignUpSubmitted()) : null,
-          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
-          child: const Text('Registrarme'),
         ),
       ),
     );

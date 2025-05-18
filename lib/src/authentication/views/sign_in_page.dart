@@ -1,4 +1,4 @@
-import 'package:flutter/gestures.dart';
+import 'package:flutter/gestures.dart' show TapGestureRecognizer;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sensazion_app/src/app/snack_bar.dart';
 import 'package:sensazion_app/src/config/service_locator.dart';
 import 'package:sensazion_app/src/authentication/authentication.dart';
+import 'package:sensazion_app/src/components/components.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -20,7 +21,7 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Padding(
           padding: const EdgeInsets.all(12),
           child: BlocProvider(
@@ -39,152 +40,116 @@ class SignInPage extends StatelessWidget {
               },
               child: Align(
                 alignment: const Alignment(0, -1 / 3),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // TODO: Welcome
-                    const _WelcomeText(),
+                child: BlocBuilder<SignInBloc, SignInState>(
+                  builder: (context, state) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Bienvenido de vuelta',
+                              textScaler: MediaQuery.textScalerOf(context),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(height: 50),
 
-                    const SizedBox(height: 50),
+                          // Email
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: EmailField(
+                              onChanged: (email) {
+                                context.read<SignInBloc>().add(SignInEmailChanged(email));
+                              },
+                              validationError: context.select(
+                                (SignInBloc bloc) => bloc.state.email.displayError,
+                              ),
+                              textInputAction: TextInputAction.next,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
 
-                    // Email
-                    const _EmailInput(),
+                          // Password
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: PasswordField(
+                              onChanged: (password) {
+                                context.read<SignInBloc>().add(SignInPasswordChanged(password));
+                              },
+                              validationError: context.select(
+                                (SignInBloc bloc) => bloc.state.password.displayError,
+                              ),
+                              onSubmitted: (_) {
+                                context.read<SignInBloc>().add(const SignInSubmitted());
+                              },
+                              textInputAction: TextInputAction.send,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
 
-                    const SizedBox(height: 30),
+                          // TODO: Forgot password?
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 8.0),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'Olvidaste tu contraseña?',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.copyWith(color: Colors.blue),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
 
-                    // Password
-                    const _PasswordInput(),
+                          // Sign In
+                          ThemedTextButton(
+                            isInProgressOrSuccess: context.select(
+                              (SignInBloc bloc) => bloc.state.status.isInProgressOrSuccess,
+                            ),
+                            onPressed:
+                                context.select((SignInBloc bloc) => bloc.state.isValid)
+                                    ? () => context.read<SignInBloc>().add(const SignInSubmitted())
+                                    : null,
+                            text: 'Iniciar sesión',
+                          ),
+                          const SizedBox(height: 120),
 
-                    // TODO: Forgot password?
-                    const _ResetPasswordButton(),
-
-                    const SizedBox(height: 40),
-
-                    // Sign In
-                    _SignInButton(),
-
-                    const SizedBox(height: 120),
-
-                    // TODO: Don't have an account? Sign Up!
-                    const _SignUpButton(),
-                  ],
+                          // Don't have an account? Sign Up!
+                          RichText(
+                            textScaler: MediaQuery.textScalerOf(context),
+                            text: TextSpan(
+                              text: 'No tienes una cuenta aún? ',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              children: [
+                                TextSpan(
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap = () => context.go(SignUpPage.route().path),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(color: Colors.blue),
+                                  text: 'Regístrate',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _WelcomeText extends StatelessWidget {
-  const _WelcomeText();
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Welcome to SensazionApp',
-      style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-    );
-  }
-}
-
-class _PasswordInput extends StatelessWidget {
-  const _PasswordInput();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextField(
-        onChanged: (password) {
-          context.read<SignInBloc>().add(SignInPasswordChanged(password));
-        },
-        onSubmitted: (_) {
-          context.read<SignInBloc>().add(const SignInSubmitted());
-        },
-        textInputAction: TextInputAction.done,
-        decoration: InputDecoration(labelText: 'Password'),
-      ),
-    );
-  }
-}
-
-class _EmailInput extends StatelessWidget {
-  const _EmailInput();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextField(
-        onChanged: (email) {
-          context.read<SignInBloc>().add(SignInEmailChanged(email));
-        },
-        enableSuggestions: true,
-        textInputAction: TextInputAction.next,
-        decoration: InputDecoration(labelText: 'Email'),
-      ),
-    );
-  }
-}
-
-class _ResetPasswordButton extends StatelessWidget {
-  const _ResetPasswordButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 8.0),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Text(
-          'Forgot password?',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.blue),
-        ),
-      ),
-    );
-  }
-}
-
-class _SignUpButton extends StatelessWidget {
-  const _SignUpButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      textScaler: MediaQuery.textScalerOf(context),
-      text: TextSpan(
-        text: 'Don\'t have an account? ',
-        style: Theme.of(context).textTheme.bodyMedium,
-        children: [
-          TextSpan(
-            recognizer: TapGestureRecognizer()..onTap = () => context.push(SignUpPage.route().path),
-            text: 'Sign Up',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.blue),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SignInButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final isInProgressOrSuccess = context.select(
-      (SignInBloc bloc) => bloc.state.status.isInProgressOrSuccess,
-    );
-
-    if (isInProgressOrSuccess) return const CircularProgressIndicator();
-
-    final isValid = context.select((SignInBloc bloc) => bloc.state.isValid);
-
-    return ElevatedButton(
-      key: const Key('SignInForm_button'),
-      onPressed: isValid ? () => context.read<SignInBloc>().add(const SignInSubmitted()) : null,
-      child: const Text('Sign In'),
     );
   }
 }
