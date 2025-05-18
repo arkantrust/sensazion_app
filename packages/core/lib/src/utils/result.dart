@@ -9,9 +9,9 @@ class Success<T> extends Result<T> {
   const Success(this.value);
 
   /// Use this constructor to create a success void result for methods that return no value.
-  /// 
+  ///
   /// Use `Result<void>` as the type parameter.
-  /// 
+  ///
   /// `return const Success<void>.empty();`
   const Success.empty() : value = null as T;
 }
@@ -19,7 +19,14 @@ class Success<T> extends Result<T> {
 class Failure<T> extends Result<T> {
   final Exception error;
 
+  /// Optionally provide a stack trace for unknown errors.
+  StackTrace? stackTrace;
+
   Failure(this.error);
+
+  /// Use this constructor for unknown failures (e.g., caught errors that are not Exception).
+  Failure.unknown([Object? error, this.stackTrace])
+    : error = error is Exception ? error : Exception(error?.toString() ?? 'Unknown error');
 }
 
 /// Extension methods to reduce boilerplate
