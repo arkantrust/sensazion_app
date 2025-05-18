@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:core/core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -28,18 +27,26 @@ final class SupabaseAuthenticationRepository extends AuthenticationRepository {
       await _supabase.auth.signUp(
         email: email,
         password: password,
-        data: {
-          'first_name': firstName,
-          'last_name': lastName,
-        }
+        data: {'first_name': firstName, 'last_name': lastName},
       );
       _controller.add(AuthenticationStatus.authenticated);
       return const Success.empty();
+    } on AuthWeakPasswordException {
+      return Failure(const WeakPassword());
     } on AuthApiException catch (e) {
-      return Failure(Exception(e.code ?? 'Unknown error'));
-    } catch (e) {
-      log('Error signing in: $e', level: 2000);
-      return Failure(Exception(e.toString()));
+      if (e.code == 'user_already_exists') {
+        return Failure(const EmailAlreadyExists());
+      }
+      rethrow;
+    } on AuthRetryableFetchException {
+      final connected = await hasInternetAccess();
+      if (!connected) {
+        return Failure(const NoInternetConnection());
+      } else {
+        return Failure(const ServerUnreachable());
+      }
+    } catch (e, s) {
+      return Failure.unknown(e, s);
     }
   }
 
@@ -47,14 +54,29 @@ final class SupabaseAuthenticationRepository extends AuthenticationRepository {
   Future<Result> signIn({required String email, required String password}) async {
     try {
       var res = await _supabase.auth.signInWithPassword(email: email, password: password);
-      if (res.session == null) return Failure(Exception('No session found'));
+      if (res.session == null) return Failure(const NoSessionFound());
       _controller.add(AuthenticationStatus.authenticated);
       return const Success.empty();
     } on AuthApiException catch (e) {
-      return Failure(Exception(e.code ?? 'Unknown error'));
-    } catch (e) {
-      log('Error signing in: $e', level: 2000);
-      return Failure(Exception(e.toString()));
+      if (e.code == 'invalid_credentials') {
+        // if exists, WrongPassword
+        // else, EmailNotFound
+        List<Map<String, dynamic>> data = await _supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', email);
+        return Failure(data.isEmpty ? const EmailNotFound() : const WrongPassword());
+      }
+      rethrow;
+    } on AuthRetryableFetchException {
+      final connected = await hasInternetAccess();
+      if (!connected) {
+        return Failure(const NoInternetConnection());
+      } else {
+        return Failure(const ServerUnreachable());
+      }
+    } catch (e, s) {
+      return Failure.unknown(e, s);
     }
   }
 
@@ -64,11 +86,15 @@ final class SupabaseAuthenticationRepository extends AuthenticationRepository {
       await _supabase.auth.signOut();
       _controller.add(AuthenticationStatus.unauthenticated);
       return const Success.empty();
-    } on AuthApiException catch (e) {
-      return Failure(Exception(e.code ?? 'unknown'));
-    } catch (e) {
-      log('Error signing in: $e', level: 2000);
-      return Failure(Exception(e.toString()));
+    } on AuthRetryableFetchException {
+      final connected = await hasInternetAccess();
+      if (!connected) {
+        return Failure(const NoInternetConnection());
+      } else {
+        return Failure(const ServerUnreachable());
+      }
+    } catch (e, s) {
+      return Failure.unknown(e, s);
     }
   }
 

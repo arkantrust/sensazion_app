@@ -41,7 +41,15 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     );
 
     if (res.isFailure) {
-      emit(state.copyWith(status: FormzSubmissionStatus.failure, error: 'Unknown error'));
+      final err = res.errorOrNull;
+      String msg = switch (err) {
+        WrongPassword _ => 'Contraseña incorrecta',
+        EmailNotFound _ => 'No estás registrado',
+        NoInternetConnection _ => 'No estás conectado a internet',
+        ServerUnreachable _ => 'No fue posible acceder al servidor',
+        _ => 'Algo salió mal',
+      };
+      emit(state.copyWith(status: FormzSubmissionStatus.failure, error: msg));
       return;
     }
     emit(state.copyWith(status: FormzSubmissionStatus.success, error: ''));

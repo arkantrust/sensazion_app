@@ -13,3 +13,11 @@ Future<bool> isReachable(String url) async {
     return false;
   }
 }
+
+class NoInternetConnection implements Exception {
+  const NoInternetConnection();
+}
+
+class ServerUnreachable implements Exception {
+  const ServerUnreachable();
+}

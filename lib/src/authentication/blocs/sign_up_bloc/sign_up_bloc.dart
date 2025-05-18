@@ -61,9 +61,18 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     );
 
     if (res.isFailure) {
-      emit(state.copyWith(status: FormzSubmissionStatus.failure, error: 'Unknown error'));
+      final err = res.errorOrNull;
+      String msg = switch (err) {
+        WeakPassword _ => 'La contraseña es muy débil',
+        EmailAlreadyExists _ => 'Este correo ya está registrado',
+        NoInternetConnection _ => 'No estás conectado a internet',
+        ServerUnreachable _ => 'No fue posible acceder al servidor',
+        _ => 'Algo salió mal',
+      };
+      emit(state.copyWith(status: FormzSubmissionStatus.failure, error: msg));
       return;
     }
+
     emit(state.copyWith(status: FormzSubmissionStatus.success, error: ''));
   }
 }

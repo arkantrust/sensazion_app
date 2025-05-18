@@ -29,9 +29,9 @@ class SignUpPage extends StatelessWidget {
               return sl<SignUpBloc>();
             },
             child: BlocListener<SignUpBloc, SignUpState>(
-              listenWhen: (previous, current) => previous.error != current.error,
+              listenWhen: (previous, current) => previous.status != current.status && current.status.isFailure,
               listener: (context, state) {
-                if (state.error != '') {
+                if (state.status.isFailure) {
                   HapticFeedback.mediumImpact();
                   context.showSnackBar(state.error);
                 }

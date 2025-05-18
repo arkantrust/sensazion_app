@@ -1,20 +1,19 @@
-class AuthenticationFailure implements Exception {
-  final String message;
+class EmailNotFound implements Exception {
+  const EmailNotFound();
+}
 
-  const AuthenticationFailure._(this.message);
+class EmailAlreadyExists implements Exception {
+  const EmailAlreadyExists();
+}
 
-  factory AuthenticationFailure.wrongPassword() =>
-      const AuthenticationFailure._('Wrong password provided.');
+class WrongPassword implements Exception {
+  const WrongPassword();
+}
 
-  factory AuthenticationFailure.unknownEmail() =>
-      const AuthenticationFailure._('Unknown email address.');
+class WeakPassword implements Exception {
+  const WeakPassword();
+}
 
-  factory AuthenticationFailure.noInternetConnection() =>
-      const AuthenticationFailure._('No internet connection.');
-
-  factory AuthenticationFailure.unknown([String? details]) =>
-      AuthenticationFailure._('Unknown authentication error.${details != null ? ' $details' : ''}');
-
-  @override
-  String toString() => 'AuthenticationFailure: $message';
+class NoSessionFound implements Exception {
+  const NoSessionFound();
 }
