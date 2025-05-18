@@ -37,7 +37,7 @@ class AppRouter {
         final authState = auth.state;
 
         // The route is /auth/* (e.g., /auth/sign-in, /auth/sign-up, etc.)
-        final goingToAuth = state.matchedLocation.contains('/auth/');
+        final goingToAuth = state.matchedLocation.startsWith('/auth/');
 
         final isAuthenticated = authState.status == AuthenticationStatus.authenticated;
 
@@ -54,15 +54,10 @@ class AppRouter {
         SignUpPage.route(), // route: /auth/sign-up
         GoRoute(
           path: '/auth',
-          builder: (context, state) {
-            final authStatus = context.select((AuthenticationBloc bloc) => bloc.state.status);
-            if (authStatus == AuthenticationStatus.unknown) {
-              return const SafeArea(
-                child: Scaffold(body: Center(child: CircularProgressIndicator())),
-              );
-            }
-
-            return const HomePage();
+          redirect: (context, state) {
+            final authStatus = context.read<AuthenticationBloc>().state.status;
+            if (authStatus == AuthenticationStatus.authenticated) return ProfilePage.route().path;
+            return SignInPage.route().path;
           },
         ),
         ProfilePage.route(), // route: /profile
