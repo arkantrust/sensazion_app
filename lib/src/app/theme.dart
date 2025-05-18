@@ -26,38 +26,16 @@ ThemeData _appTheme(ColorScheme palette) {
 
     // Navigation Bar Theme
     navigationBarTheme: NavigationBarThemeData(
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
       backgroundColor: palette.surface,
-      surfaceTintColor: palette.surfaceTint,
-      indicatorColor: palette.secondaryContainer,
-      labelTextStyle: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: palette.onSecondaryContainer,
-          );
-        }
-        return TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          color: palette.onSurfaceVariant,
-        );
-      }),
+      shadowColor: palette.shadow,
+      indicatorColor: palette.primaryContainer,
       iconTheme: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return IconThemeData(color: palette.onSecondaryContainer, size: 24);
+          return IconThemeData(color: palette.onPrimaryContainer, size: 24);
         }
         return IconThemeData(color: palette.onSurfaceVariant, size: 24);
       }),
-    ),
-
-    // Bottom Navigation Bar Theme (for legacy support)
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: palette.surface,
-      selectedItemColor: palette.primary,
-      unselectedItemColor: palette.onSurfaceVariant,
-      type: BottomNavigationBarType.fixed,
-      elevation: 3,
     ),
 
     // Card Theme

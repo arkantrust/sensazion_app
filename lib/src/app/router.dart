@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sensazion_app/src/app/main_layout.dart';
 
 import 'package:sensazion_app/src/home/home.dart';
 import 'package:sensazion_app/src/authentication/authentication.dart';
@@ -49,7 +50,13 @@ class AppRouter {
         return null;
       },
       routes: [
-        HomePage.route(), // rpute: /
+        ShellRoute(
+          builder: (context, state, child) => MainLayout(child: child),
+          routes: [
+            HomePage.route(), // route: /
+            ProfilePage.route(), // route: /profile
+          ],
+        ),
         SignInPage.route(), // route: /auth/sign-in
         SignUpPage.route(), // route: /auth/sign-up
         GoRoute(
@@ -60,7 +67,6 @@ class AppRouter {
             return SignInPage.route().path;
           },
         ),
-        ProfilePage.route(), // route: /profile
       ],
       errorBuilder:
           (context, state) =>
