@@ -24,12 +24,12 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   }
 
   void _onFirstChanged(SignUpFirstChanged event, Emitter<SignUpState> emit) {
-    final first = event.first;
+    final first = Name.dirty(event.first);
     emit(state.copyWith(first: first));
   }
 
   void _onLastChanged(SignUpLastChanged event, Emitter<SignUpState> emit) {
-    final last = event.last;
+    final last = Name.dirty(event.last);
     emit(state.copyWith(last: last));
   }
 
@@ -54,8 +54,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress, error: ''));
 
     final res = await _authenticationRepository.signUp(
-      firstName: state.first,
-      lastName: state.last,
+      firstName: state.first.value,
+      lastName: state.last.value,
       email: state.email.value,
       password: state.password.value,
     );

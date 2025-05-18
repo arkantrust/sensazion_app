@@ -69,7 +69,7 @@ class SignUpPage extends StatelessWidget {
                                     onChanged: (first) {
                                       context.read<SignUpBloc>().add(SignUpFirstChanged(first));
                                     },
-                                    isEmpty: state.first.isEmpty, // TODO: Add validation
+                                    isEmpty: state.first.value.isEmpty,
                                     textInputAction: TextInputAction.next,
                                     label: 'Nombre',
                                   ),
@@ -79,7 +79,7 @@ class SignUpPage extends StatelessWidget {
                                     onChanged: (last) {
                                       context.read<SignUpBloc>().add(SignUpLastChanged(last));
                                     },
-                                    isEmpty: state.last.isEmpty, // TODO: Add validation
+                                    isEmpty: state.last.value.isEmpty,
                                     textInputAction: TextInputAction.next,
                                     label: 'Apellido',
                                   ),
