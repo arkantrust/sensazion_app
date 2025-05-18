@@ -16,13 +16,13 @@ class Success<T> extends Result<T> {
   const Success.empty() : value = null as T;
 }
 
-class Failure<T> extends Result<T> {
+class Failure extends Result<Exception> {
   final Exception error;
 
   /// Optionally provide a stack trace for unknown errors.
   StackTrace? stackTrace;
 
-  Failure(this.error);
+  Failure(this.error, [this.stackTrace]);
 
   /// Use this constructor for unknown failures (e.g., caught errors that are not Exception).
   Failure.unknown([Object? error, this.stackTrace])
@@ -35,7 +35,7 @@ extension ResultExtensions<T> on Result<T> {
   bool get isSuccess => this is Success<T>;
 
   /// Check if result is failure
-  bool get isFailure => this is Failure<T>;
+  bool get isFailure => this is Failure;
 
   /// Get value (throws if failure)
   T get value => switch (this) {
@@ -53,18 +53,6 @@ extension ResultExtensions<T> on Result<T> {
   Exception? get errorOrNull => switch (this) {
     Success() => null,
     Failure(error: final e) => e,
-  };
-
-  /// Transform success value
-  Result<U> map<U>(U Function(T) transform) => switch (this) {
-    Success(value: final v) => Success(transform(v)),
-    Failure(error: final e) => Failure(e),
-  };
-
-  /// Chain operations (flatMap/bind)
-  Result<U> flatMap<U>(Result<U> Function(T) transform) => switch (this) {
-    Success(value: final v) => transform(v),
-    Failure(error: final e) => Failure(e),
   };
 
   /// Handle both cases

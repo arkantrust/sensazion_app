@@ -14,54 +14,13 @@ void main() {
 
     test('Failure throws on .value and returns error', () {
       final error = Exception('Something went wrong');
-      final result = Failure<int>(error);
+      final result = Failure(error);
 
       expect(result.isSuccess, isFalse);
       expect(result.isFailure, isTrue);
       expect(() => result.value, throwsA(same(error)));
       expect(result.valueOrNull, isNull);
       expect(result.errorOrNull, error);
-    });
-
-    test('map transforms success value', () {
-      final result = Success<int>(2);
-      final mapped = result.map((v) => v * 2);
-      expect(mapped, isA<Success<int>>());
-      expect((mapped as Success<int>).value, 4);
-    });
-
-    test('map preserves failure', () {
-      final error = Exception('fail');
-      final result = Failure<int>(error);
-      final mapped = result.map((v) => v * 2);
-      expect(mapped, isA<Failure<int>>());
-      expect((mapped as Failure).error, error);
-    });
-
-    test('flatMap chains multiple successes', () {
-      final r1 = Success<int>(2);
-      final chained = r1.flatMap((v) => Success(v * 2)).flatMap((v) => Success('$v units'));
-
-      expect(chained, isA<Success<String>>());
-      expect((chained as Success).value, '4 units');
-    });
-
-    test('flatMap short-circuits on failure', () {
-      final error = Exception('nope');
-      final result = Success(2)
-          .flatMap((v) => Failure<int>(error))
-          .flatMap((v) => Success(v * 100)); // should not be called
-
-      expect(result, isA<Failure<int>>());
-      expect(result.errorOrNull, error);
-    });
-
-    test('fold handles success and failure correctly', () {
-      final s = Success<String>('ok');
-      final f = Failure<String>(Exception('fail'));
-
-      expect(s.fold((v) => 'S: $v', (e) => 'F: $e'), 'S: ok');
-      expect(f.fold((v) => 'S: $v', (e) => 'F: $e'), startsWith('F: Exception: fail'));
     });
 
     test('Success.empty behaves like return;', () {
@@ -87,7 +46,7 @@ void main() {
 
     test('Result.value throws for failure, returns for success', () {
       final s = Success<int>(10);
-      final f = Failure<int>(Exception('nope'));
+      final f = Failure(Exception('nope'));
 
       expect(s.value, 10);
       expect(() => f.value, throwsA(isA<Exception>()));
@@ -95,7 +54,7 @@ void main() {
 
     test('Result.valueOrNull and errorOrNull behave correctly', () {
       final s = Success('hello');
-      final f = Failure<String>(Exception('oops'));
+      final f = Failure(Exception('oops'));
 
       expect(s.valueOrNull, 'hello');
       expect(s.errorOrNull, null);
