@@ -4,7 +4,7 @@ publish_to: 'none'
 platforms:
   android:
   ios:
-version: 0.0.1
+version: 0.1.0 # Working authentication flow
 
 environment:
   sdk: ^3.7.2
@@ -31,6 +31,9 @@ dependencies:
   flutter_avif: ^3.0.0
   auto_size_text: ^3.0.0
   get_it: ^8.0.3
+
+  flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
