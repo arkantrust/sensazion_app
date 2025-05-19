@@ -100,10 +100,12 @@ final class SupabaseAuthenticationRepository extends AuthenticationRepository {
 
   @override
   Stream<AuthenticationStatus> get status async* {
-    yield AuthenticationStatus.unauthenticated;
+    yield AuthenticationStatus.unknown;
     _supabase.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
-      if (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.tokenRefreshed) {
+      if (event == AuthChangeEvent.signedIn ||
+          event == AuthChangeEvent.tokenRefreshed ||
+          event == AuthChangeEvent.initialSession) {
         _controller.add(AuthenticationStatus.authenticated);
       } else if (event == AuthChangeEvent.signedOut) {
         _controller.add(AuthenticationStatus.unauthenticated);

@@ -35,12 +35,10 @@ class AppRouter {
       debugLogDiagnostics: true,
       refreshListenable: AuthenticationRefreshStream(auth.stream),
       redirect: (context, state) {
-        final authState = auth.state;
-
         // The route is /auth/* (e.g., /auth/sign-in, /auth/sign-up, etc.)
         final goingToAuth = state.matchedLocation.startsWith('/auth/');
 
-        final isAuthenticated = authState.status == AuthenticationStatus.authenticated;
+        final isAuthenticated = auth.state.status == AuthenticationStatus.authenticated;
 
         if (!isAuthenticated && !goingToAuth) return SignInPage.route().path;
 
@@ -60,11 +58,21 @@ class AppRouter {
         SignInPage.route(), // route: /auth/sign-in
         SignUpPage.route(), // route: /auth/sign-up
         GoRoute(
+          path: '/splash',
+          builder: (context, state) {
+            return SafeArea(child: Scaffold(body: Center(child: CircularProgressIndicator())));
+          },
+        ),
+        GoRoute(
           path: '/auth',
           redirect: (context, state) {
             final authStatus = context.read<AuthenticationBloc>().state.status;
-            if (authStatus == AuthenticationStatus.authenticated) return ProfilePage.route().path;
-            return SignInPage.route().path;
+            return switch (authStatus) {
+              AuthenticationStatus.unknown =>
+                '/splash', // Wait for the authentication status to be determined
+              AuthenticationStatus.unauthenticated => SignInPage.route().path,
+              AuthenticationStatus.authenticated => HomePage.route().path,
+            };
           },
         ),
       ],

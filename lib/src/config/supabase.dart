@@ -9,5 +9,16 @@ Future<void> initSupabase() async {
   if (url.isEmpty || anonKey.isEmpty) {
     throw Exception('Supabase URL and Anonimous Key must be provided');
   }
-  await Supabase.initialize(url: url, anonKey: anonKey);
+
+  await Supabase.initialize(
+    url: url,
+    anonKey: anonKey,
+    authOptions: FlutterAuthClientOptions(
+      authFlowType: AuthFlowType.implicit,
+      autoRefreshToken: true,
+      localStorage: SharedPreferencesLocalStorage(
+        persistSessionKey: 'refresh_token', // TODO: Use flutter_secure_storage
+      ),
+    ),
+  );
 }
